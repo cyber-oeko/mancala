@@ -1,6 +1,6 @@
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtGui import QPainter, QBrush, QPen, QColor, QPixmap, QMouseEvent
+from PyQt5.QtGui import QPainter, QBrush, QPen, QColor, QPixmap, QMouseEvent, QFont
 from PyQt5.QtCore import Qt, QTimer
 import random
 import numpy as np
@@ -85,6 +85,23 @@ class Window(QMainWindow):
             marble = marbles[k]
             marble_img = QPixmap("marbles/{}.png".format(marble))
             painter.drawPixmap(x+pos[0], y+pos[1], MARBLE_SIZE, MARBLE_SIZE, marble_img)
+        self.draw_text(0, painter)
+        self.draw_text(1, painter)
+
+    def draw_text(self, player_id, painter):
+        if self.game.active_player == player_id:
+            painter.setPen(QPen(QColor(212, 205, 171), 1))
+        else:
+            painter.setPen(QPen(QColor(182, 196, 162), 1))
+        painter.setFont(QFont("Futura", FONT_SIZE))
+        x = self.game.width * (CIRCLE_RADIUS + HOLE_PADDING) * 2 + HOLE_PADDING
+        if not self.player_id == player_id:
+            y = HOLE_PADDING + CIRCLE_RADIUS
+            painter.drawText(x, y, self.player_names[(self.player_id+1)%2])
+        else:
+            y = self.height - HOLE_PADDING - CIRCLE_RADIUS
+            painter.drawText(x, y, self.player_names[self.player_id])
+
 
     def mousePressEvent(self, event: QMouseEvent):
         if not event.button() == Qt.LeftButton:
