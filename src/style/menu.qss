@@ -1,0 +1,4 @@
+QLineEdit:disabled {
+    background-color: #748276;
+}
+

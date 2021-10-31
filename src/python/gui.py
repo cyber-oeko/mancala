@@ -1,5 +1,5 @@
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5.QtGui import QPainter, QBrush, QPen, QColor, QPixmap, QMouseEvent, QFont
 from PyQt5.QtCore import Qt, QTimer
 import random
@@ -13,14 +13,15 @@ import time
 
 
 class Window(QMainWindow):
-    def __init__(self, player_id, game_id, player1_name, player2_name):
+    def __init__(self, player_id, game_id, player1_name, player2_name, url):
         super().__init__()
-        self.setWindowIcon(QtGui.QIcon('marbles_large/14.png'))
+        self.url = url
+        self.setWindowIcon(QtGui.QIcon('src/assets/marbles_large/14.png'))
         self.game = Game(self)
         self.player_id = player_id
         self.game_id = game_id
         self.player_names = (player1_name, player2_name)
-        self.title = "Steinchenspiel"
+        self.title = TITLE
         self.top = 500*self.player_id
         self.left = 0
         self.width = (CIRCLE_RADIUS + HOLE_PADDING) * 2 * (1+self.game.width)
@@ -31,6 +32,7 @@ class Window(QMainWindow):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.check_for_answer)
         self.move_id = -1
+        QApplication.instance().setOverrideCursor(Qt.ArrowCursor)
         self.timer.start(100)
 
     def InitWindow(self):
@@ -72,7 +74,7 @@ class Window(QMainWindow):
                 positions = get_marble_positions(len(marbles), i*self.game.width+j, self.directions)
                 for k, pos in enumerate(positions):
                     marble = marbles[k]
-                    marble_img = QPixmap("marbles/{}.png".format(marble))
+                    marble_img = QPixmap("src/assets/marbles/{}.png".format(marble))
                     painter.drawPixmap(x+pos[0], y+pos[1], MARBLE_SIZE, MARBLE_SIZE, marble_img)
 
         marbles = self.game.inventory
@@ -83,7 +85,7 @@ class Window(QMainWindow):
         positions = get_marble_positions(len(marbles), i*self.game.width+j, self.directions)
         for k, pos in enumerate(positions):
             marble = marbles[k]
-            marble_img = QPixmap("marbles/{}.png".format(marble))
+            marble_img = QPixmap("src/assets/marbles/{}.png".format(marble))
             painter.drawPixmap(x+pos[0], y+pos[1], MARBLE_SIZE, MARBLE_SIZE, marble_img)
         self.draw_text(0, painter)
         self.draw_text(1, painter)
@@ -132,7 +134,7 @@ class Window(QMainWindow):
                             "player": self.player_names[self.player_id],
                             "type": 0,
                             "x": i, "y": j, "data": -1}
-                    response = requests.post(API_URL, json=data)
+                    response = requests.post(self.url, json=data)
                     self.move_id = response.json()["move_id"]
                     self.game.turn(i, j, -1)
                 elif self.game._get_next_hole([i, j], -1) == self.start_hole_waiting:
@@ -143,7 +145,7 @@ class Window(QMainWindow):
                             "player": self.player_names[self.player_id],
                             "type": 0,
                             "x": i, "y": j, "data": 1}
-                    response = requests.post(API_URL, json=data)
+                    response = requests.post(self.url, json=data)
                     self.move_id = response.json()["move_id"]
                     self.game.turn(i, j, 1)
                 else:
@@ -157,7 +159,7 @@ class Window(QMainWindow):
                         "player": self.player_names[self.player_id],
                         "type": 1,
                         "x": i, "y": j, "data": 0}
-                response = requests.post(API_URL, json=data)
+                response = requests.post(self.url, json=data)
                 self.move_id = response.json()["move_id"]
                 self.game.take_decision(False)
             elif [i, j] == self.game.take_hole:
@@ -166,7 +168,7 @@ class Window(QMainWindow):
                         "player": self.player_names[self.player_id],
                         "type": 1,
                         "x": i, "y": j, "data": 1}
-                response = requests.post(API_URL, json=data)
+                response = requests.post(self.url, json=data)
                 self.move_id = response.json()["move_id"]
                 self.game.take_decision(True)
             return
@@ -175,7 +177,7 @@ class Window(QMainWindow):
     def check_for_answer(self):
         if self.player_id == self.game.active_player:
             return
-        response = requests.get(API_URL + "?game_id={}".format(self.game_id))
+        response = requests.get(self.url + "?game_id={}".format(self.game_id))
         if int(response.json()["id"]) > self.move_id:
             r = response.json()
             if r["player"] == self.player_names[(self.player_id+1)%2]:

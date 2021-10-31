@@ -4,5 +4,4 @@ MID_PADDING = 40
 MARBLE_SIZE = 40
 FONT_SIZE = 16
 TITLE = "Mancala"
-
-API_URL = "http://localhost/steinchenspiel/server.php"
+URL_DEFAULT = "https://kopton.org/mancala/index.php"
