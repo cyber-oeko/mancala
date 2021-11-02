@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Mancala
+Comment=Online multiplayer mancala game
+Exec=mancala
+Icon=/usr/lib/python3/dist-packages/mancala/assets/marbles_large/14.png
+Categories=Game;
+Terminal=false
