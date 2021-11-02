@@ -4,10 +4,11 @@ from PyQt5.QtGui import QPainter, QBrush, QPen, QColor, QPixmap, QMouseEvent, QF
 from PyQt5.QtCore import Qt, QTimer
 import random
 import numpy as np
-from game import Game, GameState
-from config import *
-from helper import get_marble_positions, get_hole_positions
+from mancala.game import Game, GameState
+from mancala.config import *
+from mancala.helper import get_marble_positions, get_hole_positions
 import sys
+import os
 import requests
 import time
 
@@ -16,7 +17,7 @@ class Window(QMainWindow):
     def __init__(self, player_id, game_id, player1_name, player2_name, url):
         super().__init__()
         self.url = url
-        self.setWindowIcon(QtGui.QIcon('src/assets/marbles_large/14.png'))
+        self.setWindowIcon(QtGui.QIcon(os.path.dirname(__file__) + '/assets/marbles_large/14.png'))
         self.game = Game(self)
         self.player_id = player_id
         self.game_id = game_id
@@ -74,7 +75,7 @@ class Window(QMainWindow):
                 positions = get_marble_positions(len(marbles), i*self.game.width+j, self.directions)
                 for k, pos in enumerate(positions):
                     marble = marbles[k]
-                    marble_img = QPixmap("src/assets/marbles/{}.png".format(marble))
+                    marble_img = QPixmap(os.path.dirname(__file__) + "/assets/marbles/{}.png".format(marble))
                     painter.drawPixmap(x+pos[0], y+pos[1], MARBLE_SIZE, MARBLE_SIZE, marble_img)
 
         marbles = self.game.inventory
@@ -85,7 +86,7 @@ class Window(QMainWindow):
         positions = get_marble_positions(len(marbles), i*self.game.width+j, self.directions)
         for k, pos in enumerate(positions):
             marble = marbles[k]
-            marble_img = QPixmap("src/assets/marbles/{}.png".format(marble))
+            marble_img = QPixmap(os.path.dirname(__file__) + "/assets/marbles/{}.png".format(marble))
             painter.drawPixmap(x+pos[0], y+pos[1], MARBLE_SIZE, MARBLE_SIZE, marble_img)
         self.draw_text(0, painter)
         self.draw_text(1, painter)

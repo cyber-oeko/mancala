@@ -1,5 +1,5 @@
 import numpy as np
-from config import * 
+from mancala.config import *
 
 def rotate(pos, angle):
     pos = np.array(pos)

@@ -7,8 +7,9 @@ from PyQt5 import QtGui
 import requests
 import time
 import sys
-from config import *
-from gui import Window
+import os
+from mancala.config import *
+from mancala.gui import Window
 
 App = QApplication(sys.argv)
 
@@ -16,7 +17,8 @@ App = QApplication(sys.argv)
 class MenuWindow(QDialog):
     def __init__(self):
         super().__init__()
-        self.setWindowIcon(QtGui.QIcon('src/assets/marbles_large/4.png'))
+        print(__file__)
+        self.setWindowIcon(QtGui.QIcon(os.path.dirname(__file__) + '/assets/marbles_large/4.png'))
         self.title = TITLE
         self.top = 50
         self.left = 50
@@ -53,7 +55,7 @@ class MenuWindow(QDialog):
         layout.addRow(QLabel("Game ID:"), self.game_textbox)
         self.game_textbox.setEnabled(self.checkbox.checkState() != Qt.Unchecked)
         self.checkbox.stateChanged.connect(self.checkBoxClick)
-        qssfile = open("src/style/menu.qss").read()
+        qssfile = open(os.path.dirname(__file__) + "/style/menu.qss").read()
         self.game_textbox.setStyleSheet(qssfile)
         self.formGroupBox.setLayout(layout)
 

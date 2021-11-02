@@ -3,8 +3,8 @@ import requests
 import argparse
 import time
 import sys
-from config import *
-from gui import Window
+from mancala.config import *
+from mancala.gui import Window
 
 parser = argparse.ArgumentParser(description='Start the Steinchenspiel game.')
 parser.add_argument("name", type=str, help="choose a name")
