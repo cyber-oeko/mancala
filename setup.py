@@ -28,5 +28,5 @@ setuptools.setup(
     },
     package_dir={"": "src"},
     packages=["mancala"],
-    python_requires=">=3.7",
+    python_requires=">=3.5",
 )
