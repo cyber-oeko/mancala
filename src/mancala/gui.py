@@ -34,7 +34,7 @@ class Window(QMainWindow):
         self.timer.timeout.connect(self.check_for_answer)
         self.move_id = -1
         QApplication.instance().setOverrideCursor(Qt.ArrowCursor)
-        self.timer.start(100)
+        self.timer.start(500)
 
     def InitWindow(self):
         self.setWindowTitle(self.title)
@@ -160,7 +160,17 @@ class Window(QMainWindow):
                         "player": self.player_names[self.player_id],
                         "type": 1,
                         "x": i, "y": j, "data": 0}
-                response = requests.post(self.url, json=data)
+                is_sent = False
+                while not is_sent:
+                    try:
+                        response = requests.post(self.url, json=data)
+                    except:
+                        time.sleep(2)
+                        response = None
+                    if response:
+                        is_sent = True
+                    else:
+                        time.sleep(2)
                 self.move_id = response.json()["move_id"]
                 self.game.take_decision(False)
             elif [i, j] == self.game.take_hole:
@@ -169,7 +179,17 @@ class Window(QMainWindow):
                         "player": self.player_names[self.player_id],
                         "type": 1,
                         "x": i, "y": j, "data": 1}
-                response = requests.post(self.url, json=data)
+                is_sent = False
+                while not is_sent:
+                    try:
+                        response = requests.post(self.url, json=data)
+                    except:
+                        time.sleep(2)
+                        response = None
+                    if response:
+                        is_sent = True
+                    else:
+                        time.sleep(2)
                 self.move_id = response.json()["move_id"]
                 self.game.take_decision(True)
             return
@@ -178,7 +198,10 @@ class Window(QMainWindow):
     def check_for_answer(self):
         if self.player_id == self.game.active_player:
             return
-        response = requests.get(self.url + "?game_id={}".format(self.game_id))
+        try:
+            response = requests.get(self.url + "?game_id={}".format(self.game_id), timeout=5)
+        except:
+            return
         if int(response.json()["id"]) > self.move_id:
             r = response.json()
             if r["player"] == self.player_names[(self.player_id+1)%2]:
