@@ -4,7 +4,7 @@ Mancala
 Installation (Client)
 ---------------------
 Recommended: via .deb-Package
-https://github.com/cyber-oeko/mancala/releases/download/v1.0.0/python3-mancala_1.0.0-1_all.deb
+https://github.com/johanneskopton/mancala/releases/download/v1.0.0/python3-mancala_1.0.0-1_all.deb
 
 Alternatively:
 ```
